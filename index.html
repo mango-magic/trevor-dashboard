@@ -5,265 +5,725 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Trevor's Brain - ManyMangoes</title>
+<title>Trevor Approvals - ManyMangoes</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; max-width: 900px; margin: 0 auto; -webkit-font-smoothing: antialiased; }
-  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
-  .header h1 { color: #f1ab1c; font-size: 24px; }
-  .header .mango { font-size: 28px; }
-  .subtitle { color: #666; font-size: 12px; margin-bottom: 20px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; margin-bottom: 20px; }
-  .stat { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 12px; text-align: center; }
-  .stat-num { font-size: 28px; font-weight: 700; color: #f1ab1c; line-height: 1; }
-  .stat-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .tab { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; border: 1px solid #333; background: #1a1a1a; color: #888; transition: all 0.2s; }
-  .tab.active { background: #f1ab1c; color: #0a0a0a; border-color: #f1ab1c; }
-  .tab .count { margin-left: 4px; opacity: 0.7; }
-  .section-title { color: #f1ab1c; font-size: 16px; font-weight: 700; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
-  .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-  .card-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-  .card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-  .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-  .badge-waiting { background: #4a3a00; color: #f1ab1c; }
-  .badge-inbox { background: #333; color: #ccc; }
-  .badge-progress { background: #0a2a4a; color: #42a5f5; }
-  .badge-blocked { background: #4a0a0a; color: #ef5350; }
-  .badge-done { background: #1a2a1a; color: #4caf50; }
-  .badge-critical { background: #4a0a0a; color: #ef5350; }
-  .badge-high { background: #3a2a00; color: #ff9800; }
-  .badge-medium { background: #3a3a00; color: #f1ab1c; }
-  .badge-low { background: #2a2a2a; color: #888; }
-  .badge-agent { background: #1a1a3a; color: #7c8aff; }
-  .badge-overdue { background: #4a0a0a; color: #ff5252; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
-  .card-notes { font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 10px; }
-  .draft-box { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px; margin: 10px 0; }
-  .draft-label { font-size: 10px; color: #f1ab1c; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
-  .draft-to { font-size: 11px; color: #666; margin-bottom: 4px; }
-  .draft-subject { font-size: 12px; color: #aaa; font-weight: 600; margin-bottom: 6px; }
-  .draft-body { font-size: 12px; color: #999; line-height: 1.5; white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  .action-row { display: flex; gap: 8px; margin-top: 10px; }
-  .btn-approve { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #1a6b1a; color: #4caf50; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #2a8a2a; transition: all 0.2s; cursor: pointer; }
-  .btn-approve:hover { background: #2a8a2a; color: #fff; }
-  .btn-reject { flex: 0.5; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #3a1a1a; color: #ef5350; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #5a2a2a; transition: all 0.2s; cursor: pointer; }
-  .btn-reject:hover { background: #5a2a2a; color: #fff; }
-  .btn-edit { flex: 0.5; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #2a2a3a; color: #7c8aff; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #3a3a5a; transition: all 0.2s; cursor: pointer; }
-  .btn-edit:hover { background: #3a3a5a; color: #fff; }
-  .card-link { display: inline-block; margin-top: 8px; padding: 6px 14px; background: #f1ab1c; color: #0a0a0a; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none; }
-  .done-section { background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 12px; padding: 14px; margin-top: 16px; }
-  .done-item { font-size: 13px; color: #7a7a7a; padding: 4px 0; border-bottom: 1px solid #1a2a1a; }
-  .done-item:last-child { border-bottom: none; }
-  .done-check { color: #4caf50; margin-right: 6px; }
-  .sched-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
-  .sched-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 10px; }
-  .sched-name { font-size: 13px; font-weight: 600; color: #e0e0e0; }
-  .sched-time { font-size: 11px; color: #666; margin-top: 2px; }
-  .sched-status { font-size: 11px; font-weight: 700; margin-top: 4px; }
-  .sched-live { color: #4caf50; }
-  .sched-disabled { color: #ef5350; }
-  .footer { text-align: center; color: #444; font-size: 11px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #1a1a1a; }
-  @media (max-width: 480px) { body { padding: 12px; } .header h1 { font-size: 20px; } .stat-num { font-size: 22px; } .stats { grid-template-columns: repeat(3, 1fr); } .action-row { flex-direction: column; } .btn-approve, .btn-reject, .btn-edit { flex: 1; } }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .protocol-banner { background: #1a1a00; border: 1px solid #3a3a00; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 11px; color: #f1ab1c; line-height: 1.4; }
-  .protocol-banner strong { color: #fff; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    border-bottom: 3px solid #f1ab1c;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-area .mango { font-size: 26px; }
+
+  .logo-area h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f1ab1c;
+  }
+
+  .logo-area .subtitle {
+    font-size: 12px;
+    color: #666;
+    margin-top: 1px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .stat-badge {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 6px 14px;
+    text-align: center;
+  }
+
+  .stat-badge .num {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1ab1c;
+  }
+
+  .stat-badge .label {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .urgent-badge { border-color: #e74c3c; }
+  .urgent-badge .num { color: #e74c3c; }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  .section-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 28px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #222;
+  }
+
+  .card {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: #f1ab1c33; }
+  .card.urgent { border-left: 4px solid #e74c3c; }
+  .card.normal { border-left: 4px solid #f1ab1c; }
+
+  .card-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card-header:hover { background: #1a1a1a; }
+
+  .card-title-area { flex: 1; }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .card-meta {
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .card-meta span { display: flex; align-items: center; gap: 3px; }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .tag-urgent { background: #e74c3c22; color: #e74c3c; border: 1px solid #e74c3c44; }
+  .tag-pending { background: #f1ab1c22; color: #f1ab1c; border: 1px solid #f1ab1c44; }
+  .tag-overdue { background: #e67e2222; color: #e67e22; border: 1px solid #e67e2244; }
+
+  .card-expand-icon {
+    color: #555;
+    font-size: 14px;
+    transition: transform 0.2s;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  .card.expanded .card-expand-icon { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid #222;
+  }
+
+  .card.expanded .card-body { display: block; }
+
+  .detail-section { margin-top: 14px; }
+
+  .detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #f1ab1c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .detail-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 3px;
+    font-size: 13px;
+  }
+
+  .detail-row .key {
+    color: #777;
+    min-width: 55px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .detail-row .val { color: #ccc; }
+
+  .draft-box {
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #ccc;
+    white-space: pre-wrap;
+  }
+
+  .context-box {
+    background: #0d0d0d;
+    border: 1px solid #252525;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #999;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .option-box {
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .option-box:hover { border-color: #f1ab1c; }
+  .option-box.selected { border-color: #f1ab1c; background: #f1ab1c0d; }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #f1ab1c;
+    margin-bottom: 4px;
+  }
+
+  .option-text {
+    font-size: 13px;
+    color: #bbb;
+    line-height: 1.5;
+  }
+
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-approve {
+    background: #f1ab1c;
+    color: #0a0a0a;
+    flex: 1;
+  }
+  .btn-approve:hover { background: #ffc042; transform: translateY(-1px); }
+
+  .btn-edit {
+    background: transparent;
+    color: #f1ab1c;
+    border: 1px solid #f1ab1c55;
+  }
+  .btn-edit:hover { background: #f1ab1c15; }
+
+  .btn-reject {
+    background: transparent;
+    color: #e74c3c;
+    border: 1px solid #e74c3c33;
+  }
+  .btn-reject:hover { background: #e74c3c15; border-color: #e74c3c; }
+
+  .timestamp {
+    font-size: 11px;
+    color: #444;
+    margin-top: 10px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #f1ab1c;
+    color: #0a0a0a;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 20px rgba(241,171,28,0.3);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .approve-all-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #141414;
+    border-top: 1px solid #333;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .btn-approve-all {
+    background: #f1ab1c;
+    color: #0a0a0a;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-approve-all:hover { background: #ffc042; }
+
+  @media (max-width: 600px) {
+    header { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .header-stats { gap: 10px; }
+    .card-title { font-size: 15px; }
+    .action-bar { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
-<div class="header"><span class="mango">Ã°ÂÂ¥Â­</span><h1>Trevor's Brain</h1></div>
-<p class="subtitle">ManyMangoes AI Fleet | Last updated: April 9, 2026 5:30 PM AEST</p>
-<div class="stats">
-  <div class="stat"><div class="stat-num">26</div><div class="stat-label">Total</div></div>
-  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Done Today</div></div>
-  <div class="stat"><div class="stat-num" style="color:#ef5350">5</div><div class="stat-label">Need You</div></div>
-  <div class="stat"><div class="stat-num">2</div><div class="stat-label">Blocked</div></div>
-  <div class="stat"><div class="stat-num">7</div><div class="stat-label">Active</div></div>
+
+<header>
+  <div class="logo-area">
+    <span class="mango">ð¥­</span>
+    <div>
+      <h1>Trevor Approvals</h1>
+      <div class="subtitle">Tap a card to preview, then Approve / Edit / Reject</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-badge urgent-badge">
+      <div class="num">2</div>
+      <div class="label">Urgent</div>
+    </div>
+    <div class="stat-badge">
+      <div class="num">7</div>
+      <div class="label">Pending</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="section-header">ð´ Urgent - 24hr Deadline (Apr 10)</div>
+
+  <!-- GORDON 1: Follow-up -->
+  <div class="card urgent" id="card-gordon-1">
+    <div class="card-header" onclick="toggle('card-gordon-1')">
+      <div class="card-title-area">
+        <div class="card-title">Gordon Campbell - Follow-Up Email</div>
+        <div class="card-meta">
+          <span>ð§ Email</span>
+          <span>To: gordon.campbell@rdc.ai</span>
+          <span><span class="tag tag-urgent">24hr Window</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">Gordon Campbell - CEO of RDC.AI ($37M Series B fintech, explainable AI for banks). Clients: Westpac, NAB, M&T Bank. 30yr enterprise tech. Your meeting today went great (38 min). This follow-up needs to land within 24 hours - deadline is tomorrow ~2PM AEST.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Email Preview</div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">trevor@manymangoes.com (on behalf of Isaac)</span></div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">gordon.campbell@rdc.ai</span></div>
+        <div class="detail-row"><span class="key">CC:</span><span class="val">None</span></div>
+        <div class="detail-row"><span class="key">Subject:</span><span class="val">Great chatting today - MangoMagic briefing attached</span></div>
+        <div class="detail-row"><span class="key">Attach:</span><span class="val">MangoMagic Briefing Report (PDF)</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Thanks for the chat today Gordon. Really enjoyed diving into RDC.AI's explainable AI work and where it intersects with what we're building at MangoMagic.
+
+As promised, I've attached the MangoMagic briefing report covering our target audience insights, pilot structure, deliverables, and the 8-week timeline.
+
+I'll also intro you to Felipe separately - he'll be your main point of contact for getting the interview scheduled.
+
+Looking forward to what we build together.
+
+Cheers,
+Isaac</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Gordon%20Campbell%20Follow-Up%20Email&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Gordon%20Campbell%20Follow-Up%20Email&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Gordon%20Campbell%20Follow-Up%20Email&body=Don't%20send%20this.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 3:23 PM</div>
+    </div>
+  </div>
+
+  <!-- GORDON 2: Felipe Intro -->
+  <div class="card urgent" id="card-gordon-2">
+    <div class="card-header" onclick="toggle('card-gordon-2')">
+      <div class="card-title-area">
+        <div class="card-title">Gordon â Felipe - Intro Email</div>
+        <div class="card-meta">
+          <span>ð§ Email</span>
+          <span>To: Gordon + Felipe</span>
+          <span><span class="tag tag-urgent">24hr Window</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">Connects Gordon with Felipe so they can schedule the MangoMagic interview. Part of the same follow-up package. Send alongside Email 1.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Email Preview</div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">trevor@manymangoes.com (on behalf of Isaac)</span></div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">gordon.campbell@rdc.ai, felipe@manymangoes.com</span></div>
+        <div class="detail-row"><span class="key">CC:</span><span class="val">None</span></div>
+        <div class="detail-row"><span class="key">Subject:</span><span class="val">Intro - Gordon Campbell (RDC.AI) â Felipe (MangoMagic)</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Hey both,
+
+Wanted to make this intro so you can get the MangoMagic interview locked in.
+
+Gordon - Felipe is our Head of Content at ManyMangoes. He'll be running the interview and working with you on the MangoMagic piece.
+
+Felipe - Gordon is the founder of RDC.AI, a $37M Series B fintech focused on explainable AI for banks. Clients include Westpac, NAB, and M&T Bank. 30 years in enterprise tech. He and I had a great chat today and he's keen to be featured - fascinating angle on explainable AI in financial services.
+
+I'll let you two take it from here to find a time that works.
+
+Cheers,
+Isaac</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Gordon%20Felipe%20Intro%20Email&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Gordon%20Felipe%20Intro%20Email&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Gordon%20Felipe%20Intro%20Email&body=Don't%20send%20this.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 3:23 PM</div>
+    </div>
+  </div>
+
+  <div class="section-header">ð¡ Pending Approval</div>
+
+  <!-- FRANK CUIULI -->
+  <div class="card normal" id="card-frank">
+    <div class="card-header" onclick="toggle('card-frank')">
+      <div class="card-title-area">
+        <div class="card-title">Frank Cuiuli - Sydney Meeting</div>
+        <div class="card-meta">
+          <span>ð§ Email</span>
+          <span>To: frank.cuiuli@8squad.com.au</span>
+          <span><span class="tag tag-pending">Pending</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">Frank Cuiuli - former founder of 8squad (boutique Salesforce partner, 1000+ projects). Resigned Mar 2025 over growth vs profitability conflict with board. Impressed by ManyMangoes' video strategy (1M views in 90 days). Wants to explore Salesforce ecosystem collab. From your Apr 8 call, he wants you to demo to Denny (GTM head) and Jesse Lovell (marketing lead). Your free Sydney slots: Mon 14th 11:20-12:30, Tue 15th 10:50-12:30, Fri 17th 8:20-10:00.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Email Preview</div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">trevor@manymangoes.com (on behalf of Isaac)</span></div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">frank.cuiuli@8squad.com.au</span></div>
+        <div class="detail-row"><span class="key">CC:</span><span class="val">None</span></div>
+        <div class="detail-row"><span class="key">Subject:</span><span class="val">Sydney next week - let's grab a coffee</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Hey Frank,
+
+I'm heading to Sydney next week and would love to catch up in person. Our chat was great and I want to keep the momentum going - especially around getting that demo in front of Denny and Jesse.
+
+Are you free Tuesday the 15th around 11am? Happy to come to you or meet wherever works.
+
+Cheers,
+Isaac</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Don't%20send%20this.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 3:48 PM</div>
+    </div>
+  </div>
+
+  <!-- ANNA OSHEROV -->
+  <div class="card normal" id="card-anna">
+    <div class="card-header" onclick="toggle('card-anna')">
+      <div class="card-title-area">
+        <div class="card-title">Anna Osherov - Logo Follow-Up</div>
+        <div class="card-meta">
+          <span>ð¬ Google Chat</span>
+          <span>Anna Partnership Space</span>
+          <span><span class="tag tag-overdue">7 Days Overdue</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">You asked Anna for logo feedback on Apr 2. Zero reply in 7 days. Need to chase to keep partnership collateral moving forward.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Message Details</div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">Anna Osherov (Google Chat - Anna Partnership Space)</span></div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">Isaac</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Pick One (tap to select)</div>
+        <div class="options-container">
+          <div class="option-box" onclick="selectOpt(this,'card-anna','A')">
+            <div class="option-label">Option A - Casual</div>
+            <div class="option-text">"Hey Anna! Just circling back on the logo thoughts - did you get a chance to have a look? No rush, just want to make sure we're aligned before we move forward with anything. Let me know!"</div>
+          </div>
+          <div class="option-box" onclick="selectOpt(this,'card-anna','B')">
+            <div class="option-label">Option B - Tied to Next Steps</div>
+            <div class="option-text">"Hey Anna, hope you're well! Wanted to follow up on the logo - we're keen to lock that in so we can keep moving on the partnership collateral. Let me know your thoughts when you get a sec!"</div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" id="anna-approve-btn" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Approved.%20Send%20whichever%20option%20looks%20best.">â Approve Selected</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Rewrite%20it%20to%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Don't%20send.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 1:27 PM</div>
+    </div>
+  </div>
+
+  <!-- GRAHAM ROBINSON -->
+  <div class="card normal" id="card-graham">
+    <div class="card-header" onclick="toggle('card-graham')">
+      <div class="card-title-area">
+        <div class="card-title">Graham Robinson - Reply to "Talk to me"</div>
+        <div class="card-meta">
+          <span>ð¬ Google Chat DM</span>
+          <span>Personal reply from Isaac</span>
+          <span><span class="tag tag-pending">Pending</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">Graham sent "Talk to me ya caaaaaaarnt!" yesterday. He wants your time. This is a personal DM - casual, mate-to-mate tone.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Message Details</div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">Graham Robinson (Google Chat DM)</span></div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">Isaac (personal reply)</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Haha legend - what's going on mate? Free for a quick call this arvo?</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Graham%20Robinson%20Reply&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Graham%20Robinson%20Reply&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Graham%20Robinson%20Reply&body=Don't%20send.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 1:27 PM</div>
+    </div>
+  </div>
+
+  <!-- RAKEWA ATIENO -->
+  <div class="card normal" id="card-rakewa">
+    <div class="card-header" onclick="toggle('card-rakewa')">
+      <div class="card-title-area">
+        <div class="card-title">Rakewa Atieno - Harman Question</div>
+        <div class="card-meta">
+          <span>ð¬ Google Chat DM</span>
+          <span>Chase follow-up</span>
+          <span><span class="tag tag-pending">Pending</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">You asked Rakewa about the "Harman question" on Apr 8. No reply in 24 hours. Need to chase for an update.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Message Details</div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">Rakewa Atieno (Google Chat - Rakewa Mango DM)</span></div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">Isaac / Trevor</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Hey Rakewa - did you get a chance to look into the Harman question? Need an update on where that's at.</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Rakewa%20Atieno%20Harman%20Chase&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Rakewa%20Atieno%20Harman%20Chase&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Rakewa%20Atieno%20Harman%20Chase&body=Don't%20send.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 1:27 PM</div>
+    </div>
+  </div>
+
+  <!-- ANTHONY PERL -->
+  <div class="card normal" id="card-anthony">
+    <div class="card-header" onclick="toggle('card-anthony')">
+      <div class="card-title-area">
+        <div class="card-title">Anthony Perl (CommTogether) - Next Steps</div>
+        <div class="card-meta">
+          <span>ð§ Email reply</span>
+          <span>Thread: "Great to catch up today"</span>
+          <span><span class="tag tag-pending">Pending</span></span>
+        </div>
+      </div>
+      <span class="card-expand-icon">â¾</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-section">
+        <div class="detail-label">Why This Matters</div>
+        <div class="context-box">Anthony emailed Apr 7 asking about next steps. CC'd Felipe and Christian. He's a Christian Fletcher pipeline contact (CommTogether). Needs a reply to keep deal momentum.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Email Preview</div>
+        <div class="detail-row"><span class="key">From:</span><span class="val">trevor@manymangoes.com (on behalf of Isaac)</span></div>
+        <div class="detail-row"><span class="key">To:</span><span class="val">Anthony Perl (CommTogether)</span></div>
+        <div class="detail-row"><span class="key">CC:</span><span class="val">Felipe, Christian Fletcher</span></div>
+        <div class="detail-row"><span class="key">Thread:</span><span class="val">"Great to catch up today"</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Exact Draft</div>
+        <div class="draft-box">Hey Anthony, great to hear from you! Really enjoyed that chat too. Let's lock in a time to map out next steps properly - I'll get Felipe to coordinate a follow-up call for when you're back. Christian's across it as well so we'll make sure everyone's aligned. Chat soon!</div>
+      </div>
+      <div class="action-bar">
+        <a class="btn btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anthony%20Perl%20CommTogether%20Reply&body=Approved.%20Send%20it.">â Approve</a>
+        <a class="btn btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anthony%20Perl%20CommTogether%20Reply&body=Here%20are%20my%20changes%3A%0A%0A">â Edit</a>
+        <a class="btn btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anthony%20Perl%20CommTogether%20Reply&body=Don't%20send.%20Reason%3A%20">â Reject</a>
+      </div>
+      <div class="timestamp">Queued: Thu 9 Apr, 1:27 PM</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="approve-all-bar">
+  <a class="btn-approve-all" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20ALL%207%20Pending%20Items&body=Approve%20all%207%20items.%20Send%20everything%20as%20drafted.%0A%0A(Gordon%20follow-up%2C%20Gordon-Felipe%20intro%2C%20Frank%20Sydney%2C%20Anna%20logo%2C%20Graham%20reply%2C%20Rakewa%20chase%2C%20Anthony%20Perl)">â Approve All 7 Items</a>
 </div>
-<div class="tabs">
-  <div class="tab active" data-tab="approvals">Approve<span class="count">5</span></div>
-  <div class="tab" data-tab="active">Active<span class="count">7</span></div>
-  <div class="tab" data-tab="done">Done<span class="count">12</span></div>
-  <div class="tab" data-tab="scheduled">System<span class="count">10</span></div>
-</div>
-<div class="tab-content active" id="tab-approvals">
-  <div class="protocol-banner"><strong>Approval Gate:</strong> Nothing gets sent until you tap Approve here. Each card shows the exact message that will go out. Tap Approve to send, Edit to rewrite, or Reject to kill it.</div>
-  <div class="card">
-    <div class="card-title">Anna Osherov - Logo Follow-Up</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-critical">Critical</span><span class="badge badge-overdue">7 DAYS OVERDUE</span></div>
-    <div class="card-notes">Anna sent logo concepts via Google Chat (Anna Partnership space). No response for 7 days. Need to follow up to maintain the relationship.</div>
-    <div class="draft-box">
-      <div class="draft-label">Exact message that will be sent</div>
-      <div class="draft-to">To: Anna Osherov via Google Chat (Anna Partnership space)</div>
-      <div class="draft-subject">From: Trevor</div>
-      <div class="draft-body">Hey Anna - just wanted to loop back on the logo concepts you shared last week. Isaac's been flat out but really appreciates the work. He'll have feedback for you shortly. Just didn't want you thinking we'd gone quiet!</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=go%20-%20send%20it%20as%20shown">Approve</a>
-      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Change%20the%20message%20to%3A%20">Edit</a>
-      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Frank Cuiuli - Sydney Meeting Next Week</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
-    <div class="card-notes">Intel: Former world martial arts champion. Resigned from 8squad CEO March 2025. Salesforce partner, 1000+ projects. Impressed by ManyMangoes video strategy. Wants to explore collaboration.</div>
-    <div class="draft-box">
-      <div class="draft-label">Exact email that will be sent</div>
-      <div class="draft-to">To: frank.cuiuli@8squad.com.au</div>
-      <div class="draft-subject">Subject: Following up - Sydney catch-up next week?</div>
-      <div class="draft-body">Hi Frank,
 
-Trevor here from ManyMangoes - Isaac's Chief of Staff AI.
+<div class="toast" id="toast"></div>
 
-Isaac mentioned he'll be in Sydney next week and would love to catch up in person to continue the conversation from last week's call. What day works best for you?
-
-We'll also get that demo session with Felipe locked in for Denny and Jesse.
-
-Best,
-Trevor
-Chief of Staff AI, ManyMangoes
-trevor@manymangoes.com</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=go%20-%20send%20it%20as%20shown">Approve</a>
-      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Change%20the%20message%20to%3A%20">Edit</a>
-      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Rakewa - Chase on Harman Question</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
-    <div class="card-notes">Need to chase Rakewa on the Harman question via Google Chat.</div>
-    <div class="draft-box">
-      <div class="draft-label">Exact message that will be sent</div>
-      <div class="draft-to">To: Rakewa via Google Chat</div>
-      <div class="draft-subject">From: Trevor</div>
-      <div class="draft-body">Hey Rakewa - just checking in on the Harman question from last week. Any update on your end? Isaac's keen to get this sorted.</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Rakewa%20Harman%20Chase&body=go%20-%20send%20it%20as%20shown">Approve</a>
-      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Rakewa%20Harman%20Chase&body=Change%20the%20message%20to%3A%20">Edit</a>
-      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Rakewa%20Harman%20Chase&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Graham Robinson - Reply</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
-    <div class="card-notes">Graham sent "Talk to me" - personal DM, should come from Isaac directly. This one's yours to handle, not Trevor's.</div>
-    <div class="draft-box">
-      <div class="draft-label">Isaac action needed - personal reply</div>
-      <div class="draft-to">To: Graham Robinson via Google Chat DM</div>
-      <div class="draft-subject">From: You (Isaac) - this is personal, not Trevor</div>
-      <div class="draft-body">This is a personal message from Graham. Trevor can't reply to this one - it needs to come from you. Tap "I'll Handle It" to mark it done, or "Tell Trevor" to dictate what to say.</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Graham%20Robinson%20-%20Isaac%20Will%20Handle&body=I%27ll%20reply%20to%20Graham%20myself.%20Mark%20done.">I'll Handle It</a>
-      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Graham%20Robinson%20Reply&body=Tell%20Graham%3A%20">Tell Trevor What to Say</a>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Anthony Perl - CommTogether Next Steps</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
-    <div class="card-notes">Anthony Perl from CommTogether - Christian Fletcher introduction. Need to send next steps email.</div>
-    <div class="draft-box">
-      <div class="draft-label">Exact email that will be sent</div>
-      <div class="draft-to">To: Anthony Perl (CommTogether)</div>
-      <div class="draft-subject">Subject: ManyMangoes x CommTogether - Next Steps</div>
-      <div class="draft-body">Hi Anthony,
-
-Trevor here from ManyMangoes - Isaac's Chief of Staff AI.
-
-Great to connect through Christian. Isaac's keen to explore how ManyMangoes can help CommTogether with your digital presence and content strategy.
-
-Would you be open to a quick 20-minute call this week or next? Happy to work around your schedule.
-
-Best,
-Trevor
-Chief of Staff AI, ManyMangoes
-trevor@manymangoes.com</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anthony%20Perl%20CommTogether&body=go%20-%20send%20it%20as%20shown">Approve</a>
-      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anthony%20Perl%20CommTogether&body=Change%20the%20message%20to%3A%20">Edit</a>
-      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anthony%20Perl%20CommTogether&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Notion - Downgrade to Free Plan</div>
-    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-critical">Critical</span></div>
-    <div class="card-notes">Payment failing. Free plan gives unlimited pages/blocks for single user. API + MCP still work. Cost: $0. Zero migration.</div>
-    <div class="draft-box">
-      <div class="draft-label">Isaac action needed</div>
-      <div class="draft-to">Action: Go to Notion Settings &gt; Plans &gt; Downgrade to Free</div>
-      <div class="draft-subject">This is a settings change only you can make</div>
-      <div class="draft-body">Trevor can't do this one - you need to log into Notion and downgrade the plan yourself. 30-second settings change. Everything keeps working.</div>
-    </div>
-    <div class="action-row">
-      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Notion%20Downgrade%20-%20I%27ll%20Do%20It&body=I%27ll%20downgrade%20Notion%20to%20free%20today.">I'll Do It</a>
-      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Notion%20Downgrade&body=Keep%20paying.%20Reason%3A%20">Keep Paying</a>
-    </div>
-  </div>
-</div>
-<div class="tab-content" id="tab-active">
-  <div class="section-title">In Progress &amp; Inbox</div>
-  <div class="card"><div class="card-title">Karen Levin - Meeting Prep (Apr 17)</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span><span class="badge badge-agent">Trevor</span></div><div class="card-notes">Karen Levin (Founder/CEO, The Equanimity Project) - charity tackling domestic abuse + homelessness. Meeting: Thu Apr 17, 10:00 AM at Frankie B's Brunch House, Eastgardens.</div></div>
-  <div class="card"><div class="card-title">GitHub Actions Morning Brief failing</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 9 Dev</span></div><div class="card-notes">Morning briefing GitHub Action needs debugging.</div></div>
-  <div class="card"><div class="card-title">GHL signed in - validate Chrome access</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 4 CRM</span></div><div class="card-notes">Isaac confirmed GHL is signed in. Need to test Chrome automation access.</div></div>
-  <div class="card"><div class="card-title">Wesley 3+ posts/week content cadence plan</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 5 Content</span></div><div class="card-notes">Wesley needs a content plan for 3+ posts per week.</div></div>
-  <div class="card"><div class="card-title">LinkedIn Scout - hold until Monday</div><div class="card-meta"><span class="badge badge-blocked">Blocked</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 1 Scout</span></div><div class="card-notes">Per Isaac's directive: hold LinkedIn automation until Monday. Need target ICP definition.</div></div>
-  <div class="card"><div class="card-title">Define target ICP for Agent 1 LinkedIn Scout</div><div class="card-meta"><span class="badge badge-blocked">Blocked</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 1 Scout</span></div><div class="card-notes">Needs Isaac's input on which companies/roles to target.</div></div>
-  <div class="card"><div class="card-title">Test Claude in Chrome for LinkedIn automation</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 2 Outreach</span></div><div class="card-notes">Validate browser automation works for LinkedIn messaging.</div></div>
-</div>
-<div class="tab-content" id="tab-done">
-  <div class="section-title">Completed Today (April 9)</div>
-  <div class="done-section">
-    <div class="done-item"><span class="done-check">&#10003;</span> Booked Danny Martin (OpusClip) call - Tue Apr 14, 8:30 AM AEST</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Sent Warren Billington reschedule message from Trevor</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Sent Wesley Mango Descript upgrade question from Trevor</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Sent Frank Cuiuli intel package + draft meeting request to Isaac</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Gordon Campbell - Isaac sent Felipe intro directly</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Researched Notion alternatives - free downgrade recommended</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Disabled Clay MCP scheduled tasks + added absolute ban</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Updated all 10 scheduled tasks with Trevor identity protection</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Built Trevor Task Board in Notion (26 tasks)</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Created IFTTT.md operational playbook</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Built Trevor Dashboard (mobile + desktop + GitHub Pages)</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Karen Levin (Equanimity Project) meeting briefing prepped</div>
-    <div class="done-item"><span class="done-check">&#10003;</span> Added Two-Step Approval Protocol to CLAUDE.md (Danny incident fix)</div>
-  </div>
-</div>
-<div class="tab-content" id="tab-scheduled">
-  <div class="section-title">The Nervous System</div>
-  <div class="sched-grid">
-    <div class="sched-card"><div class="sched-name">approval-monitor</div><div class="sched-time">Every 10 min</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">ai-fleet-momentum</div><div class="sched-time">Every 30 min</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">chief-of-staff</div><div class="sched-time">Every 3 hours</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">morning-briefing</div><div class="sched-time">Daily 7:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">outreach-followups</div><div class="sched-time">Weekdays 10 AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">email-campaign-report</div><div class="sched-time">Daily 6:00 PM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">content-weekly-batch</div><div class="sched-time">Monday 8:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">weekly-analytics</div><div class="sched-time">Monday 7:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">data-enrichment-batch</div><div class="sched-time">Every 4 hours</div><div class="sched-status sched-disabled">DISABLED (Clay ban)</div></div>
-    <div class="sched-card"><div class="sched-name">lead-qualifier</div><div class="sched-time">Every 2 hours</div><div class="sched-status sched-disabled">DISABLED (Clay ban)</div></div>
-  </div>
-</div>
-<div class="footer">Trevor - ManyMangoes AI Fleet | Built by ManyMangoes<br><span style="color:#f1ab1c">Ã°ÂÂ¥Â­</span> Powered by Claude</div>
 <script>
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-  });
-});
-let startY = 0;
-document.addEventListener('touchstart', e => { startY = e.touches[0].pageY; });
-document.addEventListener('touchend', e => {
-  if (window.scrollY === 0 && e.changedTouches[0].pageY - startY > 100) location.reload();
+function toggle(id) {
+  document.getElementById(id).classList.toggle('expanded');
+}
+
+function selectOpt(el, cardId, opt) {
+  var card = document.getElementById(cardId);
+  var boxes = card.querySelectorAll('.option-box');
+  for (var i = 0; i < boxes.length; i++) boxes[i].classList.remove('selected');
+  el.classList.add('selected');
+
+  var btn = document.getElementById('anna-approve-btn');
+  btn.href = 'mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anna%20Osherov%20Logo%20Follow-Up%20(Option%20' + opt + ')&body=Approved.%20Send%20Option%20' + opt + '.';
+
+  showToast('Option ' + opt + ' selected');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+// Auto-expand first card
+document.addEventListener('DOMContentLoaded', function() {
+  var first = document.querySelector('.card.urgent');
+  if (first) first.classList.add('expanded');
 });
 </script>
+
 </body>
 </html>
