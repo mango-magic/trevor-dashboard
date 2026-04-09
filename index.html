@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trevor's Brain - ManyMangoes</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Trevor\'s Brain - ManyMangoes</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; max-width: 900px; margin: 0 auto; }
+  body { background: #0a0a0a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; max-width: 900px; margin: 0 auto; -webkit-font-smoothing: antialiased; }
   .header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
   .header h1 { color: #f1ab1c; font-size: 24px; }
   .header .mango { font-size: 28px; }
@@ -20,8 +22,8 @@
   .tab.active { background: #f1ab1c; color: #0a0a0a; border-color: #f1ab1c; }
   .tab .count { margin-left: 4px; opacity: 0.7; }
   .section-title { color: #f1ab1c; font-size: 16px; font-weight: 700; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
-  .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
-  .card-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .card-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
   .card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
   .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
   .badge-waiting { background: #4a3a00; color: #f1ab1c; }
@@ -32,11 +34,25 @@
   .badge-critical { background: #4a0a0a; color: #ef5350; }
   .badge-high { background: #3a2a00; color: #ff9800; }
   .badge-medium { background: #3a3a00; color: #f1ab1c; }
+  .badge-low { background: #2a2a2a; color: #888; }
   .badge-agent { background: #1a1a3a; color: #7c8aff; }
-  .card-notes { font-size: 12px; color: #888; line-height: 1.4; }
+  .badge-overdue { background: #4a0a0a; color: #ff5252; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .card-notes { font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 10px; }
+  .draft-box { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px; margin: 10px 0; }
+  .draft-label { font-size: 10px; color: #f1ab1c; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
+  .draft-to { font-size: 11px; color: #666; margin-bottom: 4px; }
+  .draft-subject { font-size: 12px; color: #aaa; font-weight: 600; margin-bottom: 6px; }
+  .draft-body { font-size: 12px; color: #999; line-height: 1.5; white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .action-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-approve { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #1a6b1a; color: #4caf50; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #2a8a2a; transition: all 0.2s; cursor: pointer; }
+  .btn-approve:hover { background: #2a8a2a; color: #fff; }
+  .btn-reject { flex: 0.5; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #3a1a1a; color: #ef5350; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #5a2a2a; transition: all 0.2s; cursor: pointer; }
+  .btn-reject:hover { background: #5a2a2a; color: #fff; }
+  .btn-edit { flex: 0.5; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: #2a2a3a; color: #7c8aff; font-size: 14px; font-weight: 700; border-radius: 10px; text-decoration: none; border: 1px solid #3a3a5a; transition: all 0.2s; cursor: pointer; }
+  .btn-edit:hover { background: #3a3a5a; color: #fff; }
   .card-link { display: inline-block; margin-top: 8px; padding: 6px 14px; background: #f1ab1c; color: #0a0a0a; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none; }
   .done-section { background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 12px; padding: 14px; margin-top: 16px; }
-  .done-section h3 { color: #4caf50; font-size: 14px; margin-bottom: 10px; }
   .done-item { font-size: 13px; color: #7a7a7a; padding: 4px 0; border-bottom: 1px solid #1a2a1a; }
   .done-item:last-child { border-bottom: none; }
   .done-check { color: #4caf50; margin-right: 6px; }
@@ -48,56 +64,174 @@
   .sched-live { color: #4caf50; }
   .sched-disabled { color: #ef5350; }
   .footer { text-align: center; color: #444; font-size: 11px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #1a1a1a; }
+  @media (max-width: 480px) { body { padding: 12px; } .header h1 { font-size: 20px; } .stat-num { font-size: 22px; } .stats { grid-template-columns: repeat(3, 1fr); } .action-row { flex-direction: column; } .btn-approve, .btn-reject, .btn-edit { flex: 1; } }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  @media (max-width: 480px) { body { padding: 12px; } .header h1 { font-size: 20px; } .stat-num { font-size: 24px; } .stats { grid-template-columns: repeat(3, 1fr); } }
+  .protocol-banner { background: #1a1a00; border: 1px solid #3a3a00; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 11px; color: #f1ab1c; line-height: 1.4; }
+  .protocol-banner strong { color: #fff; }
 </style>
 </head>
 <body>
-<div class="header"><span class="mango">&#x1F96D;</span><h1>Trevor's Brain</h1></div>
-<p class="subtitle">ManyMangoes AI Fleet | Last updated: April 9, 2026 4:45 PM AEST</p>
+<div class="header"><span class="mango">🥭</span><h1>Trevor\'s Brain</h1></div>
+<p class="subtitle">ManyMangoes AI Fleet | Last updated: April 9, 2026 5:30 PM AEST</p>
 <div class="stats">
   <div class="stat"><div class="stat-num">26</div><div class="stat-label">Total</div></div>
   <div class="stat"><div class="stat-num">12</div><div class="stat-label">Done Today</div></div>
-  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Need You</div></div>
+  <div class="stat"><div class="stat-num" style="color:#ef5350">5</div><div class="stat-label">Need You</div></div>
   <div class="stat"><div class="stat-num">2</div><div class="stat-label">Blocked</div></div>
-  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Active</div></div>
+  <div class="stat"><div class="stat-num">7</div><div class="stat-label">Active</div></div>
 </div>
 <div class="tabs">
-  <div class="tab active" data-tab="approvals">Needs You<span class="count">4</span></div>
-  <div class="tab" data-tab="active">Active<span class="count">8</span></div>
+  <div class="tab active" data-tab="approvals">Approve<span class="count">5</span></div>
+  <div class="tab" data-tab="active">Active<span class="count">7</span></div>
   <div class="tab" data-tab="done">Done<span class="count">12</span></div>
   <div class="tab" data-tab="scheduled">System<span class="count">10</span></div>
 </div>
 <div class="tab-content active" id="tab-approvals">
-  <div class="section-title">Waiting on Your Go</div>
-  <div class="card"><div class="card-title">Frank Cuiuli - Sydney meeting next week</div><div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div><div class="card-notes">Intel package compiled. Former world martial arts champion, stepped down as 8squad CEO March 2025. Salesforce partner. Draft meeting request ready.</div><a class="card-link" href="https://mail.google.com/mail/u/0/#search/subject%3AFrank+Cuiuli+from%3Atrevor" target="_blank">Review in Gmail</a></div>
-  <div class="card"><div class="card-title">Gordon Campbell Follow-Up + Felipe Intro</div><div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span><span class="badge badge-critical">24hr Deadline</span></div><div class="card-notes">$37M Series B fintech. Meeting went great today. 2 emails ready to send.</div><a class="card-link" href="https://mail.google.com/mail/u/0/#search/subject%3AGordon+Campbell+from%3Atrevor" target="_blank">Review in Gmail</a></div>
-  <div class="card"><div class="card-title">Anna Osherov - Logo Follow-Up (7 DAYS OVERDUE)</div><div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div><div class="card-notes">Anna sent logo concepts. Follow-up message drafted. 7 days without response.</div><a class="card-link" href="https://mail.google.com/mail/u/0/#search/subject%3AAPPROVAL+Anna+from%3Atrevor" target="_blank">Review in Gmail</a></div>
-  <div class="card"><div class="card-title">Rakewa - Chase on Harman Question</div><div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-medium">Medium</span></div><div class="card-notes">Draft message ready.</div><a class="card-link" href="https://mail.google.com/mail/u/0/#search/subject%3AAPPROVAL+Rakewa+from%3Atrevor" target="_blank">Review in Gmail</a></div>
+  <div class="protocol-banner"><strong>Approval Gate:</strong> Nothing gets sent until you tap Approve here. Each card shows the exact message that will go out. Tap Approve to send, Edit to rewrite, or Reject to kill it.</div>
+  <div class="card">
+    <div class="card-title">Anna Osherov - Logo Follow-Up</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-critical">Critical</span><span class="badge badge-overdue">7 DAYS OVERDUE</span></div>
+    <div class="card-notes">Anna sent logo concepts via Google Chat (Anna Partnership space). No response for 7 days. Need to follow up to maintain the relationship.</div>
+    <div class="draft-box">
+      <div class="draft-label">Exact message that will be sent</div>
+      <div class="draft-to">To: Anna Osherov via Google Chat (Anna Partnership space)</div>
+      <div class="draft-subject">From: Trevor</div>
+      <div class="draft-body">Hey Anna - just wanted to loop back on the logo concepts you shared last week. Isaac\'s been flat out but really appreciates the work. He\'ll have feedback for you shortly. Just didn\'t want you thinking we\'d gone quiet!</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=go%20-%20send%20it%20as%20shown">Approve</a>
+      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Change%20the%20message%20to%3A%20">Edit</a>
+      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anna%20Osherov%20Logo%20Follow-Up&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Frank Cuiuli - Sydney Meeting Next Week</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
+    <div class="card-notes">Intel: Former world martial arts champion. Resigned from 8squad CEO March 2025. Salesforce partner, 1000+ projects. Impressed by ManyMangoes video strategy. Wants to explore collaboration.</div>
+    <div class="draft-box">
+      <div class="draft-label">Exact email that will be sent</div>
+      <div class="draft-to">To: frank.cuiuli@8squad.com.au</div>
+      <div class="draft-subject">Subject: Following up - Sydney catch-up next week?</div>
+      <div class="draft-body">Hi Frank,
+
+Trevor here from ManyMangoes - Isaac\'s Chief of Staff.
+
+Isaac mentioned he\'ll be in Sydney next week and would love to catch up in person to continue the conversation from last week\'s call. What day works best for you?
+
+We\'ll also get that demo session with Felipe locked in for Denny and Jesse.
+
+Best,
+Trevor
+Chief of Staff, ManyMangoes
+trevor@manymangoes.com</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=go%20-%20send%20it%20as%20shown">Approve</a>
+      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Change%20the%20message%20to%3A%20">Edit</a>
+      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Frank%20Cuiuli%20Sydney%20Meeting&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Rakewa - Chase on Harman Question</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
+    <div class="card-notes">Need to chase Rakewa on the Harman question via Google Chat.</div>
+    <div class="draft-box">
+      <div class="draft-label">Exact message that will be sent</div>
+      <div class="draft-to">To: Rakewa via Google Chat</div>
+      <div class="draft-subject">From: Trevor</div>
+      <div class="draft-body">Hey Rakewa - just checking in on the Harman question from last week. Any update on your end? Isaac\'s keen to get this sorted.</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Rakewa%20Harman%20Chase&body=go%20-%20send%20it%20as%20shown">Approve</a>
+      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Rakewa%20Harman%20Chase&body=Change%20the%20message%20to%3A%20">Edit</a>
+      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Rakewa%20Harman%20Chase&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Graham Robinson - Reply</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
+    <div class="card-notes">Graham sent "Talk to me" - personal DM, should come from Isaac directly. This one\'s yours to handle, not Trevor\'s.</div>
+    <div class="draft-box">
+      <div class="draft-label">Isaac action needed - personal reply</div>
+      <div class="draft-to">To: Graham Robinson via Google Chat DM</div>
+      <div class="draft-subject">From: You (Isaac) - this is personal, not Trevor</div>
+      <div class="draft-body">This is a personal message from Graham. Trevor can\'t reply to this one - it needs to come from you. Tap "I\'ll Handle It" to mark it done, or "Tell Trevor" to dictate what to say.</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Graham%20Robinson%20-%20Isaac%20Will%20Handle&body=I%27ll%20reply%20to%20Graham%20myself.%20Mark%20done.">I\'ll Handle It</a>
+      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Graham%20Robinson%20Reply&body=Tell%20Graham%3A%20">Tell Trevor What to Say</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Anthony Perl - CommTogether Next Steps</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-high">High</span></div>
+    <div class="card-notes">Anthony Perl from CommTogether - Christian Fletcher introduction. Need to send next steps email.</div>
+    <div class="draft-box">
+      <div class="draft-label">Exact email that will be sent</div>
+      <div class="draft-to">To: Anthony Perl (CommTogether)</div>
+      <div class="draft-subject">Subject: ManyMangoes x CommTogether - Next Steps</div>
+      <div class="draft-body">Hi Anthony,
+
+Trevor here from ManyMangoes - Isaac\'s Chief of Staff.
+
+Great to connect through Christian. Isaac\'s keen to explore how ManyMangoes can help CommTogether with your digital presence and content strategy.
+
+Would you be open to a quick 20-minute call this week or next? Happy to work around your schedule.
+
+Best,
+Trevor
+Chief of Staff, ManyMangoes
+trevor@manymangoes.com</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Anthony%20Perl%20CommTogether&body=go%20-%20send%20it%20as%20shown">Approve</a>
+      <a class="btn-edit" href="mailto:trevor@manymangoes.com?subject=EDIT%3A%20Anthony%20Perl%20CommTogether&body=Change%20the%20message%20to%3A%20">Edit</a>
+      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Anthony%20Perl%20CommTogether&body=Don%27t%20send.%20Reason%3A%20">Reject</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Notion - Downgrade to Free Plan</div>
+    <div class="card-meta"><span class="badge badge-waiting">Waiting Approval</span><span class="badge badge-critical">Critical</span></div>
+    <div class="card-notes">Payment failing. Free plan gives unlimited pages/blocks for single user. API + MCP still work. Cost: $0. Zero migration.</div>
+    <div class="draft-box">
+      <div class="draft-label">Isaac action needed</div>
+      <div class="draft-to">Action: Go to Notion Settings &gt; Plans &gt; Downgrade to Free</div>
+      <div class="draft-subject">This is a settings change only you can make</div>
+      <div class="draft-body">Trevor can\'t do this one - you need to log into Notion and downgrade the plan yourself. 30-second settings change. Everything keeps working.</div>
+    </div>
+    <div class="action-row">
+      <a class="btn-approve" href="mailto:trevor@manymangoes.com?subject=APPROVED%3A%20Notion%20Downgrade%20-%20I%27ll%20Do%20It&body=I%27ll%20downgrade%20Notion%20to%20free%20today.">I\'ll Do It</a>
+      <a class="btn-reject" href="mailto:trevor@manymangoes.com?subject=REJECTED%3A%20Notion%20Downgrade&body=Keep%20paying.%20Reason%3A%20">Keep Paying</a>
+    </div>
+  </div>
 </div>
 <div class="tab-content" id="tab-active">
-  <div class="section-title">In Progress and Inbox</div>
-  <div class="card"><div class="card-title">Notion migrate to NocoDB</div><div class="card-meta"><span class="badge badge-progress">In Progress</span><span class="badge badge-critical">Critical</span><span class="badge badge-agent">Agent 9</span></div><div class="card-notes">NocoDB cloud free tier identified. Migration in progress.</div></div>
-  <div class="card"><div class="card-title">Karen Levin - confirm meeting details</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span></div><div class="card-notes">Karen Levin (Equanimity Project) accepted. Thu Apr 17, 10AM at Frankie B's, Eastgardens.</div></div>
-  <div class="card"><div class="card-title">GHL - validate Chrome access</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 4</span></div><div class="card-notes">Isaac confirmed GHL signed in. Need to test Chrome automation.</div></div>
-  <div class="card"><div class="card-title">LinkedIn Scout - hold until Monday</div><div class="card-meta"><span class="badge badge-blocked">Blocked</span><span class="badge badge-high">High</span></div><div class="card-notes">Per Isaac. Need target ICP definition.</div></div>
+  <div class="section-title">In Progress &amp; Inbox</div>
+  <div class="card"><div class="card-title">Karen Levin - Meeting Prep (Apr 17)</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span><span class="badge badge-agent">Trevor</span></div><div class="card-notes">Karen Levin (Founder/CEO, The Equanimity Project) - charity tackling domestic abuse + homelessness. Meeting: Thu Apr 17, 10:00 AM at Frankie B\'s Brunch House, Eastgardens.</div></div>
+  <div class="card"><div class="card-title">GitHub Actions Morning Brief failing</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 9 Dev</span></div><div class="card-notes">Morning briefing GitHub Action needs debugging.</div></div>
+  <div class="card"><div class="card-title">GHL signed in - validate Chrome access</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 4 CRM</span></div><div class="card-notes">Isaac confirmed GHL is signed in. Need to test Chrome automation access.</div></div>
+  <div class="card"><div class="card-title">Wesley 3+ posts/week content cadence plan</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 5 Content</span></div><div class="card-notes">Wesley needs a content plan for 3+ posts per week.</div></div>
+  <div class="card"><div class="card-title">LinkedIn Scout - hold until Monday</div><div class="card-meta"><span class="badge badge-blocked">Blocked</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 1 Scout</span></div><div class="card-notes">Per Isaac\'s directive: hold LinkedIn automation until Monday. Need target ICP definition.</div></div>
+  <div class="card"><div class="card-title">Define target ICP for Agent 1 LinkedIn Scout</div><div class="card-meta"><span class="badge badge-blocked">Blocked</span><span class="badge badge-high">High</span><span class="badge badge-agent">Agent 1 Scout</span></div><div class="card-notes">Needs Isaac\'s input on which companies/roles to target.</div></div>
+  <div class="card"><div class="card-title">Test Claude in Chrome for LinkedIn automation</div><div class="card-meta"><span class="badge badge-inbox">Inbox</span><span class="badge badge-medium">Medium</span><span class="badge badge-agent">Agent 2 Outreach</span></div><div class="card-notes">Validate browser automation works for LinkedIn messaging.</div></div>
 </div>
 <div class="tab-content" id="tab-done">
   <div class="section-title">Completed Today (April 9)</div>
   <div class="done-section">
-    <div class="done-item"><span class="done-check">&#10003;</span>Booked Danny Martin (OpusClip) - Tue Apr 14 8:30AM via Zoom</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Sent Warren Billington reschedule message</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Sent Wesley Descript upgrade question</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Sent Frank Cuiuli intel + draft meeting request</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Sent Gordon Campbell follow-up approval emails</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Researched Notion alternatives - NocoDB recommended</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Disabled Clay MCP + added absolute ban</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Updated all 10 scheduled tasks with Trevor identity rules</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Built Trevor Task Board in Notion (26 tasks)</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Created IFTTT.md operational playbook</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Built this dashboard (mobile + desktop)</div>
-    <div class="done-item"><span class="done-check">&#10003;</span>Karen Levin accepted meeting - briefing prepped</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Booked Danny Martin (OpusClip) call - Tue Apr 14, 8:30 AM AEST</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Sent Warren Billington reschedule message from Trevor</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Sent Wesley Mango Descript upgrade question from Trevor</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Sent Frank Cuiuli intel package + draft meeting request to Isaac</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Gordon Campbell - Isaac sent Felipe intro directly</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Researched Notion alternatives - free downgrade recommended</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Disabled Clay MCP scheduled tasks + added absolute ban</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Updated all 10 scheduled tasks with Trevor identity protection</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Built Trevor Task Board in Notion (26 tasks)</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Created IFTTT.md operational playbook</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Built Trevor Dashboard (mobile + desktop + GitHub Pages)</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Karen Levin (Equanimity Project) meeting briefing prepped</div>
+    <div class="done-item"><span class="done-check">&#10003;</span> Added Two-Step Approval Protocol to CLAUDE.md (Danny incident fix)</div>
   </div>
 </div>
 <div class="tab-content" id="tab-scheduled">
@@ -106,24 +240,29 @@
     <div class="sched-card"><div class="sched-name">approval-monitor</div><div class="sched-time">Every 10 min</div><div class="sched-status sched-live">LIVE</div></div>
     <div class="sched-card"><div class="sched-name">ai-fleet-momentum</div><div class="sched-time">Every 30 min</div><div class="sched-status sched-live">LIVE</div></div>
     <div class="sched-card"><div class="sched-name">chief-of-staff</div><div class="sched-time">Every 3 hours</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">morning-briefing</div><div class="sched-time">Daily 7AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">outreach-followups</div><div class="sched-time">Weekdays 10AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">email-campaign-report</div><div class="sched-time">Daily 6PM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">content-weekly-batch</div><div class="sched-time">Monday 8AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">weekly-analytics</div><div class="sched-time">Monday 7AM</div><div class="sched-status sched-live">LIVE</div></div>
-    <div class="sched-card"><div class="sched-name">data-enrichment</div><div class="sched-time">Every 4 hours</div><div class="sched-status sched-disabled">DISABLED</div></div>
-    <div class="sched-card"><div class="sched-name">lead-qualifier</div><div class="sched-time">Every 2 hours</div><div class="sched-status sched-disabled">DISABLED</div></div>
+    <div class="sched-card"><div class="sched-name">morning-briefing</div><div class="sched-time">Daily 7:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
+    <div class="sched-card"><div class="sched-name">outreach-followups</div><div class="sched-time">Weekdays 10 AM</div><div class="sched-status sched-live">LIVE</div></div>
+    <div class="sched-card"><div class="sched-name">email-campaign-report</div><div class="sched-time">Daily 6:00 PM</div><div class="sched-status sched-live">LIVE</div></div>
+    <div class="sched-card"><div class="sched-name">content-weekly-batch</div><div class="sched-time">Monday 8:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
+    <div class="sched-card"><div class="sched-name">weekly-analytics</div><div class="sched-time">Monday 7:00 AM</div><div class="sched-status sched-live">LIVE</div></div>
+    <div class="sched-card"><div class="sched-name">data-enrichment-batch</div><div class="sched-time">Every 4 hours</div><div class="sched-status sched-disabled">DISABLED (Clay ban)</div></div>
+    <div class="sched-card"><div class="sched-name">lead-qualifier</div><div class="sched-time">Every 2 hours</div><div class="sched-status sched-disabled">DISABLED (Clay ban)</div></div>
   </div>
 </div>
-<div class="footer">Trevor - ManyMangoes AI Fleet | Built by ManyMangoes</div>
+<div class="footer">Trevor - ManyMangoes AI Fleet | Built by ManyMangoes<br><span style="color:#f1ab1c">🥭</span> Powered by Claude</div>
 <script>
-document.querySelectorAll('.tab').forEach(function(tab) {
-  tab.addEventListener('click', function() {
-    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
   });
+});
+let startY = 0;
+document.addEventListener('touchstart', e => { startY = e.touches[0].pageY; });
+document.addEventListener('touchend', e => {
+  if (window.scrollY === 0 && e.changedTouches[0].pageY - startY > 100) location.reload();
 });
 </script>
 </body>
